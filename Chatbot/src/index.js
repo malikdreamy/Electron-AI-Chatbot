@@ -37,9 +37,9 @@ const createWindow = () => {
   // read the file of the unaswered questions
    ipcMain.on('readFile', async (event, params) => {
     //const filePath = './unanswered.txt';
-    const userDataPath = app.getPath('userData');
-    const filePath = path.join(userDataPath, 'unanswered.txt');
-    fs.readFile(filePath, 'utf8', (err, data) => {
+    // const userDataPath = app.getPath('userData');
+    // const filePath = path.join(userDataPath, 'unanswered.txt');
+    fs.readFile('unanswered.txt', 'utf8', (err, data) => {
       if (err) {
         console.error(err);
         return;
@@ -54,15 +54,15 @@ const createWindow = () => {
    })
 
    ipcMain.on('clearFile', async (event, params) => {
-    const userDataPath = app.getPath('userData');
-    const filePath = path.join(userDataPath, 'unanswered.txt');
+    // const userDataPath = app.getPath('userData');
+    // const filePath = path.join(userDataPath, 'unanswered.txt');
   
-    fs.writeFile(filePath, '', function (err) {
+    fs.writeFile('unanswered.txt', '', function (err) {
       if (err) {
         console.error('Error writing file:', err);
         return;
       }
-      console.log('File cleared!');
+   
     });
   });
   
@@ -200,7 +200,7 @@ const createWindow = () => {
             }catch(err){
               console.log(err)
             }
-            `);
+            `);// find any unread messages in the inbox
           } else if(igWindow.webContents.getURL() == 'https://www.instagram.com/direct/inbox/'){
             await new Promise(r => setTimeout(r, 5000));
         igWindow.webContents.executeJavaScript(`
@@ -209,9 +209,10 @@ const createWindow = () => {
         const findUnreadMsg = async () =>{
           //check to see if any unread messages
           await new Promise(r => setTimeout(r, 30000));
+          //if unread message found then click on the message
         if(document.querySelectorAll('[data-visualcompletion="ignore"]')[2]){
           document.querySelectorAll('[data-visualcompletion="ignore"]')[2].click()
-          // check to see if any messages in hidden section
+          // check to see if any messages in request section
         } else if(document.querySelector('[href="/direct/requests/"]')){
           await new Promise(r => setTimeout(r, 5000));
           document.querySelector('[href="/direct/requests/"]').click();
@@ -269,16 +270,7 @@ const createWindow = () => {
            
             const keys = Array.from(map.keys());
 
-            // let matchFound = false;
-            //   for (let i = 0; i < keys.length; i++) {
-            //     const key = keys[i];
-            //     if (regex.test(key)) {
-            //       console.log(`Matched key: ${key}, Value: ${map.get(key)}`);
-            //       chatResponse = map.get(key);
-            //       matchFound = true;
-            //       break; // Exit the loop when a match is found
-            //     }
-            //   }
+     
 
             const fuzzy = FuzzySet(keys);
             console.log(fuzzy);
@@ -292,7 +284,7 @@ if (matches && matches[0] && matches[0][0] >= similarityThreshold) {
  console.log(map.get(bestMatch));
 
 
-
+// if match found using fuzzy
  await new Promise(r => setTimeout(r, 6000));
    igWindow.webContents.executeJavaScript(`
      try{
@@ -314,7 +306,7 @@ if (matches && matches[0] && matches[0][0] >= similarityThreshold) {
 
 
 
-
+// try to find match using regular expression
 } else {
   console.log('No match found using Fuzzy');
   await new Promise(r => setTimeout(r, 5000));
@@ -354,22 +346,38 @@ if (matches && matches[0] && matches[0][0] >= similarityThreshold) {
 
         console.log("No match using Reg!");
 
-                      const currentTime = new Date();
-              let hours = currentTime.getHours();
-              const minutes = currentTime.getMinutes();
-              const seconds = currentTime.getSeconds();
-              let meridiem = 'AM';
+           
 
-              // Convert to 12-hour format and determine AM/PM
-              if (hours >= 12) {
-                meridiem = 'PM';
-                if (hours > 12) {
-                  hours -= 12;
+              function getCurrentFormattedDateTime() {
+                const currentDate = new Date();
+                const year = currentDate.getFullYear();
+                const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+                const day = String(currentDate.getDate()).padStart(2, '0');
+                let hours = currentDate.getHours();
+                const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+                const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+                let period = 'AM'; // Default to AM
+                
+                // Convert hours to 12-hour format and determine AM/PM
+                if (hours >= 12) {
+                  period = 'PM';
+                  if (hours > 12) {
+                    hours -= 12;
+                  }
                 }
+                
+                // Handle midnight (12:00 AM) and noon (12:00 PM)
+                if (hours === 0) {
+                  hours = 12;
+                }
+                
+                // Return the formatted date and time with AM/PM indication as a string
+                return `${month}-${day}-${year} ${hours}:${minutes}:${seconds} ${period}`;
               }
+              
 
 
-        fs.appendFile('unanswered.txt', `Message: "${message}" at ${hours}:${minutes}:${seconds} ${meridiem}\n `, function (err) {
+        fs.appendFile('unanswered.txt', `Message: "${message}" at ${getCurrentFormattedDateTime()}\n `, function (err) {
           if (err) throw err;
           console.log('Updated!');
         });
@@ -385,7 +393,7 @@ if (matches && matches[0] && matches[0][0] >= similarityThreshold) {
 
 
             }) // end ipcMain onmessage curly brace
-
+                // to check if there are any unread messages in the request page
           } else if(igWindow.webContents.getURL() == 'https://www.instagram.com/direct/requests/'){
             await new Promise(r => setTimeout(r, 5000));
           igWindow.webContents.executeJavaScript(`
@@ -397,10 +405,11 @@ if (matches && matches[0] && matches[0][0] >= similarityThreshold) {
             if (el[i].innerText == 'Accept'){
            el[i].click();
           }};
-          await new Promise(r => setTimeout(r, 5000));
-          for(i = 0; i < el.length; i++){
-            if (el[i].innerText == 'Primary'){
-           el[i].click();
+          await new Promise(r => setTimeout(r, 2000));
+          const button = document.getElementsByTagName("button");
+          for(i = 0; i < button.length; i++){
+            if (button[i].innerText == 'Primary'){
+           button[i].click();
           }};
           await new Promise(r => setTimeout(r, 5000));
           
@@ -459,6 +468,7 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
 
 
 
