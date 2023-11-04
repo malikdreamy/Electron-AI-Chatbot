@@ -209,8 +209,8 @@ const createWindow = () => {
         const findUnreadMsg = async () =>{
           //check to see if any unread messages
           await new Promise(r => setTimeout(r, 30000));
-        if(document.querySelectorAll('[data-visualcompletion="ignore"]')[1]){
-          document.querySelectorAll('[data-visualcompletion="ignore"]')[1].click()
+        if(document.querySelectorAll('[data-visualcompletion="ignore"]')[2]){
+          document.querySelectorAll('[data-visualcompletion="ignore"]')[2].click()
           // check to see if any messages in hidden section
         } else if(document.querySelector('[href="/direct/requests/"]')){
           await new Promise(r => setTimeout(r, 5000));
@@ -389,8 +389,25 @@ if (matches && matches[0] && matches[0][0] >= similarityThreshold) {
           } else if(igWindow.webContents.getURL() == 'https://www.instagram.com/direct/requests/'){
             await new Promise(r => setTimeout(r, 5000));
           igWindow.webContents.executeJavaScript(`
+          const checkMessageRequest = async()=>{
           document.querySelectorAll(".x9f619.x1n2onr6.x1ja2u2z.x78zum5.x2lah0s.x1qughib.x6s0dn4.xozqiw3.x1q0g3np")[0].click();
-          `)
+          await new Promise(r => setTimeout(r, 5000));
+          const el = document.getElementsByTagName('div');
+          for(i = 0; i < el.length; i++){
+            if (el[i].innerText == 'Accept'){
+           el[i].click();
+          }};
+          await new Promise(r => setTimeout(r, 5000));
+          for(i = 0; i < el.length; i++){
+            if (el[i].innerText == 'Primary'){
+           el[i].click();
+          }};
+          await new Promise(r => setTimeout(r, 5000));
+          
+            }
+            checkMessageRequest();
+
+           `)
 
           } else if(igWindow.webContents.getURL() == "https://www.instagram.com/direct/requests/hidden/"){
             await new Promise(r => setTimeout(r, 3000));
@@ -442,5 +459,6 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
 
 
