@@ -1,8 +1,7 @@
 # Electron-AI-Chatbot
 Electron-Ai-Chatbot
 
-Desktop App utilizing Electron framework to respond smartly to instagram direct message. Utilizes only regex and fuzzyset.js for machine
-learning and responding.
+Desktop App utilizing Electron framework to respond smartly to instagram direct message. Utilizes only regex and fuzzyset.js for responding.
 
 In common user questions you enter the questions usually asked by customers, underneath you put the answer.
 This app uses regex and fuzzyset.js to match questions with responses for instagram chat. If bot is unable to answer the question
