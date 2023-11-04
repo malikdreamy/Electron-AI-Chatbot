@@ -36,9 +36,7 @@ const createWindow = () => {
 
   // read the file of the unaswered questions
    ipcMain.on('readFile', async (event, params) => {
-    //const filePath = './unanswered.txt';
-    // const userDataPath = app.getPath('userData');
-    // const filePath = path.join(userDataPath, 'unanswered.txt');
+
     fs.readFile('unanswered.txt', 'utf8', (err, data) => {
       if (err) {
         console.error(err);
@@ -54,8 +52,7 @@ const createWindow = () => {
    })
 
    ipcMain.on('clearFile', async (event, params) => {
-    // const userDataPath = app.getPath('userData');
-    // const filePath = path.join(userDataPath, 'unanswered.txt');
+
   
     fs.writeFile('unanswered.txt', '', function (err) {
       if (err) {
