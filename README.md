@@ -12,6 +12,6 @@ Where To Put Questions And Answers
 
 <img width="745" alt="Screen Shot 2023-08-07 at 2 19 22 PM" src="https://github.com/malikdreamy/Electron-AI-Chatbot/assets/119153047/81f19c4e-dd82-456d-b302-b0d7603f666f">
 
-Unanswered Questions Modal
+Unanswered Questions Modal. If the chatbot is unable to answer a question it will save the question so you can view it later.
 
 <img width="584" alt="Screen Shot 2023-08-07 at 2 19 28 PM" src="https://github.com/malikdreamy/Electron-AI-Chatbot/assets/119153047/4ccc14c3-5484-47bf-8791-152239b4d971">
